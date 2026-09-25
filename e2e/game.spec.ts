@@ -104,7 +104,10 @@ test('five-player pass and play hides cards at every handoff', async ({
   await expect(
     page.locator('.hand-section .playing-card').first(),
   ).toBeVisible();
-  await expect(page.locator('.hand-card-wrapper').last()).toHaveCSS('opacity', '1');
+  await expect(page.locator('.hand-card-wrapper').last()).toHaveCSS(
+    'opacity',
+    '1',
+  );
   await page.screenshot({
     path: testInfo.outputPath('game-table.png'),
     fullPage: true,
@@ -163,12 +166,25 @@ test('single player supports legal card selection, bots, settings and public his
   });
 });
 
-test('home, settings and setup meet automated accessibility checks', async ({ page }) => {
+test('home, settings and setup meet automated accessibility checks', async ({
+  page,
+}) => {
   await page.goto('/');
   const issues: unknown[] = [];
   const audit = async (screen: string) => {
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
-    issues.push(...results.violations.map((violation) => ({ screen, rule: violation.id, nodes: violation.nodes.map((node) => ({ target: node.target, problem: node.failureSummary })) })));
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+      .analyze();
+    issues.push(
+      ...results.violations.map((violation) => ({
+        screen,
+        rule: violation.id,
+        nodes: violation.nodes.map((node) => ({
+          target: node.target,
+          problem: node.failureSummary,
+        })),
+      })),
+    );
   };
   await audit('home');
   await page.getByRole('button', { name: 'Settings', exact: true }).click();

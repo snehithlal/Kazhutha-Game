@@ -46,19 +46,19 @@ If Google Chrome is already installed, use `PLAYWRIGHT_CHANNEL=chrome npm run te
 
 ## Project map
 
-| Location | Responsibility |
-| --- | --- |
-| `src/game/` | Typed cards, seeded shuffle, deal, move validation, round resolution, finish ordering, pure state transitions |
-| `src/game/game.test.ts` | Fixed-hand rule and finishing scenarios |
-| `src/game/ai/` | Easy/Medium/Hard strategies, public-only observation boundary, memory, simulations |
-| `src/store/` | Zustand game session and persisted presentation preferences |
-| `src/terminology/` | Regional/English dictionary; no engine dependency |
-| `src/screens/` | Home, setup, table, tutorial, settings, and results |
-| `src/components/` | Original CSS card artwork, seats, public history, accessible modal |
-| `src/utils/audio.ts` | Optional Web Audio synthesis behind a small sound API |
-| `src/styles.css` | Responsive physical-table design, Tailwind entry/theme, reduced motion |
-| `e2e/` | Playwright gameplay, privacy, responsive, and axe accessibility checks |
-| `.github/workflows/deploy.yml` | Install, format/lint checks, tests, build, GitHub Pages deployment |
+| Location                       | Responsibility                                                                                                |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `src/game/`                    | Typed cards, seeded shuffle, deal, move validation, round resolution, finish ordering, pure state transitions |
+| `src/game/game.test.ts`        | Fixed-hand rule and finishing scenarios                                                                       |
+| `src/game/ai/`                 | Easy/Medium/Hard strategies, public-only observation boundary, memory, simulations                            |
+| `src/store/`                   | Zustand game session and persisted presentation preferences                                                   |
+| `src/terminology/`             | Regional/English dictionary; no engine dependency                                                             |
+| `src/screens/`                 | Home, setup, table, tutorial, settings, and results                                                           |
+| `src/components/`              | Original CSS card artwork, seats, public history, accessible modal                                            |
+| `src/utils/audio.ts`           | Optional Web Audio synthesis behind a small sound API                                                         |
+| `src/styles.css`               | Responsive physical-table design, Tailwind entry/theme, reduced motion                                        |
+| `e2e/`                         | Playwright gameplay, privacy, responsive, and axe accessibility checks                                        |
+| `.github/workflows/deploy.yml` | Install, format/lint checks, tests, build, GitHub Pages deployment                                            |
 
 ## Engine contract
 

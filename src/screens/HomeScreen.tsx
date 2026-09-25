@@ -34,8 +34,13 @@ export function HomeScreen({ onPlay, onHow, onSettings, hasGame }: Props) {
           <button className="nav-link" onClick={onHow}>
             How to play <ArrowUpRight size={14} />
           </button>
-          <button className="nav-link settings-nav" onClick={onSettings} aria-label="Settings">
-            <Settings size={18} /><span>Settings</span>
+          <button
+            className="nav-link settings-nav"
+            onClick={onSettings}
+            aria-label="Settings"
+          >
+            <Settings size={18} />
+            <span>Settings</span>
           </button>
           <span className="nav-divider" />
           <button
@@ -192,7 +197,7 @@ export function HomeScreen({ onPlay, onHow, onSettings, hasGame }: Props) {
               <Sparkles size={23} />
             </span>
             <div>
-                <h2>Play your way</h2>
+              <h2>Play your way</h2>
               <p>Go solo or pass the phone. The classic stays classic.</p>
             </div>
           </div>

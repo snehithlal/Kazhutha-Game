@@ -148,7 +148,9 @@ button svg {
 .text-button:hover {
   color: #a17a40;
 }
-.settings-nav > svg { display: none; }
+.settings-nav > svg {
+  display: none;
+}
 .nav-divider {
   height: 23px;
   width: 1px;
@@ -2262,10 +2264,21 @@ button svg {
   }
 }
 @media (max-width: 800px) {
-  .site-header nav .settings-nav { display: inline-flex; width: 36px; min-height: 44px; justify-content: center; }
-  .settings-nav > svg { display: block; }
-  .settings-nav > span { display: none; }
-  .site-header nav .sound-button { display: none; }
+  .site-header nav .settings-nav {
+    display: inline-flex;
+    width: 36px;
+    min-height: 44px;
+    justify-content: center;
+  }
+  .settings-nav > svg {
+    display: block;
+  }
+  .settings-nav > span {
+    display: none;
+  }
+  .site-header nav .sound-button {
+    display: none;
+  }
   .site-header {
     min-height: 91px;
   }

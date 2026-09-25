@@ -198,14 +198,21 @@ export function GameScreen({
 
   return (
     <div className="game-page">
-      <header className="site-header game-header" inert={needsPass || historyOpen || resultOpen ? true : undefined}>
+      <header
+        className="site-header game-header"
+        inert={needsPass || historyOpen || resultOpen ? true : undefined}
+      >
         <Brand onClick={onHome} />
         <div className="game-header-actions">
           <button className="text-button back-home" onClick={onHome}>
             <ArrowLeft size={16} />
             Home
           </button>
-          <button className="text-button" aria-label="History" onClick={() => setHistoryOpen(true)}>
+          <button
+            className="text-button"
+            aria-label="History"
+            onClick={() => setHistoryOpen(true)}
+          >
             <Clock3 size={17} />
             <span>History</span>
           </button>
@@ -225,7 +232,10 @@ export function GameScreen({
           </button>
         </div>
       </header>
-      <main className="game-main" inert={needsPass || historyOpen || resultOpen ? true : undefined}>
+      <main
+        className="game-main"
+        inert={needsPass || historyOpen || resultOpen ? true : undefined}
+      >
         <div className="table-toolbar">
           <span className="round-pill">
             {t.round} {String(game.round.number).padStart(2, '0')}

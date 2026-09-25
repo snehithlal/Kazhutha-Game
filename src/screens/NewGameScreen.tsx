@@ -13,7 +13,7 @@ import { useSettings } from '../store/settingsStore';
 import { useTerms } from '../hooks/useTerms';
 import type { PlayerConfig } from '../game';
 
-const botNames = ['You', 'Arun', 'Maya', 'Rahul', 'Leela'];
+const botNames = ['You', 'Arun', 'Maya', 'Rahul', 'Leela', 'Divya', 'Jas'];
 export function NewGameScreen({
   onBack,
   onStart,
@@ -114,7 +114,7 @@ export function NewGameScreen({
                 02 <span>Seats at the table</span>
               </label>
               <div className="seat-count" aria-label="Number of players">
-                {[2, 3, 4, 5].map((number) => (
+                {[2, 3, 4, 5, 6, 7].map((number) => (
                   <button
                     type="button"
                     aria-pressed={number === count}

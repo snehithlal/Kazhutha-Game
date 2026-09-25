@@ -6,8 +6,8 @@ import type { GameOptions, GameState } from './types';
 
 export function createInitialState(options: GameOptions): GameState {
   const { players } = options;
-  if (players.length < 2 || players.length > 5)
-    throw new Error('Choose 2–5 players.');
+  if (players.length < 2 || players.length > 7)
+    throw new Error('Choose 2–7 players.');
   if (
     new Set(players.map((player) => player.id)).size !== players.length ||
     players.some((player) => !player.id || !player.name.trim())

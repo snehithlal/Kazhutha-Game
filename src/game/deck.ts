@@ -25,8 +25,8 @@ export function shuffle(
   return cards;
 }
 export function deal(deck: readonly Card[], count: number): Card[][] {
-  if (!Number.isInteger(count) || count < 2 || count > 5)
-    throw new Error('Choose 2–5 players.');
+  if (!Number.isInteger(count) || count < 2 || count > 7)
+    throw new Error('Choose 2–7 players.');
   const hands: Card[][] = Array.from({ length: count }, () => []);
   deck.forEach((card, i) => hands[i % count].push(card));
   return hands;

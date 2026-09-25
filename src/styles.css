@@ -1659,6 +1659,141 @@ button svg {
   color: #a9bfa0;
   margin-top: -1px;
 }
+/* ── Dramatic Cut Banner ─────────────────────────────────────── */
+.cut-banner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 22px 36px 18px;
+  border-radius: 20px;
+  background: linear-gradient(
+    145deg,
+    rgba(40, 20, 8, 0.92),
+    rgba(60, 30, 12, 0.88)
+  );
+  border: 2px solid #e8c36040;
+  box-shadow:
+    0 0 60px #d4a03080,
+    0 0 120px #d4a03040,
+    0 16px 48px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 220, 140, 0.15);
+  backdrop-filter: blur(12px);
+  pointer-events: none;
+  min-width: 240px;
+  max-width: 90%;
+}
+.cut-banner-flash {
+  position: absolute;
+  inset: -4px;
+  border-radius: 24px;
+  background: radial-gradient(circle, #ffd86c30, transparent 70%);
+  animation: banner-glow 1.5s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+.cut-banner-title {
+  font: bold clamp(22px, 4vw, 36px) var(--serif);
+  color: #ffe4a0;
+  text-shadow:
+    0 0 20px #d4a030cc,
+    0 2px 6px rgba(0, 0, 0, 0.5);
+  letter-spacing: 3px;
+  white-space: nowrap;
+}
+.cut-banner-detail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: clamp(11px, 1.5vw, 14px);
+  color: #e8d6b0;
+}
+.cut-banner-who,
+.cut-banner-takes {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.cut-banner-card {
+  font: bold 15px var(--serif);
+  color: #ffe4a0;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 220, 140, 0.2);
+}
+.cut-banner-card.text-red {
+  color: #ff9b8a;
+}
+.cut-banner-taunt {
+  margin-top: 4px;
+  font-size: 10px;
+  font-style: italic;
+  color: #c8b68a;
+  letter-spacing: 0.5px;
+}
+
+/* ── Emoji Explosion ─────────────────────────────────────────── */
+.emoji-explosion {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 19;
+  pointer-events: none;
+}
+.emoji-particle {
+  position: absolute;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  will-change: transform, opacity;
+}
+
+/* ── Table Flash ─────────────────────────────────────────────── */
+.table-flash {
+  animation: table-cut-flash 0.6s ease-out;
+}
+
+/* ── Extra seat positions for 6 & 7 player games ─────────────── */
+.seat-lower-left {
+  left: 12%;
+  top: 62%;
+}
+.seat-lower-right {
+  left: 88%;
+  top: 62%;
+}
+
+@keyframes banner-glow {
+  0% {
+    opacity: 0.4;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
+@keyframes table-cut-flash {
+  0% {
+    box-shadow:
+      inset 0 0 0 4px #e8c36000,
+      0 0 0 0 #e8c36000;
+  }
+  20% {
+    box-shadow:
+      inset 0 0 80px 20px #e8c36035,
+      0 0 40px 10px #d4a03030;
+  }
+  100% {
+    box-shadow:
+      inset 0 0 0 4px #e8c36000,
+      0 0 0 0 #e8c36000;
+  }
+}
 .status-dot {
   width: 5px;
   height: 5px;
@@ -2083,6 +2218,16 @@ button svg {
     opacity: 1;
   }
 }
+@keyframes cut-bounce {
+  0% {
+    opacity: 0.5;
+    transform: translateY(2px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1.12);
+  }
+}
 @keyframes deal-in {
   from {
     opacity: 0;
@@ -2480,6 +2625,14 @@ button svg {
   .seat-right {
     left: 89%;
   }
+  .seat-lower-left {
+    left: 8%;
+    top: 60%;
+  }
+  .seat-lower-right {
+    left: 92%;
+    top: 60%;
+  }
   .player-seat {
     width: 94px;
   }
@@ -2690,6 +2843,21 @@ button svg {
   .seat-upper-right {
     left: 70%;
     top: 10%;
+  }
+  .seat-lower-left {
+    left: 10%;
+    top: 58%;
+  }
+  .seat-lower-right {
+    left: 90%;
+    top: 58%;
+  }
+  .cut-banner {
+    padding: 16px 20px 14px;
+    min-width: 200px;
+  }
+  .cut-banner-title {
+    letter-spacing: 2px;
   }
   .player-seat {
     width: 85px;

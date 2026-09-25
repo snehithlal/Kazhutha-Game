@@ -90,7 +90,7 @@ describe('deck and setup', () => {
     expect(() => scenario([[c('2')], [c('2')]])).toThrow('unique');
     expect(() => scenario([[], [c('2')]])).toThrow('start with cards');
     expect(() => createInitialState({ players: seats(1) })).toThrow();
-    expect(() => deal(createDeck(), 6)).toThrow();
+    expect(() => deal(createDeck(), 8)).toThrow();
     expect(() =>
       createInitialState({ players: [seats(2)[0], seats(2)[0]] }),
     ).toThrow('unique IDs');

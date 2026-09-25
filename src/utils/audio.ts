@@ -48,8 +48,16 @@ export const audio = {
     tone(320, 0.12, 'triangle', 0.08);
   },
   cut: () => {
-    tone(180, 0.17, 'triangle');
-    tone(140, 0.18, 'triangle', 0.1);
+    // Low rumble
+    tone(80, 0.3, 'triangle');
+    tone(100, 0.25, 'sine', 0.05);
+    // Sharp impact hit
+    tone(220, 0.12, 'square', 0.1);
+    tone(330, 0.08, 'sawtooth', 0.12);
+    // Descending sting
+    tone(440, 0.15, 'triangle', 0.18);
+    tone(280, 0.2, 'sine', 0.25);
+    tone(160, 0.25, 'triangle', 0.35);
   },
   playerFinished: () => {
     tone(520, 0.15);

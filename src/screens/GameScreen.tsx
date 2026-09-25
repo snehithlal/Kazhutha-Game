@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type CSSProperties,
@@ -31,6 +32,140 @@ import { useTerms } from '../hooks/useTerms';
 import { audio } from '../utils/audio';
 import { GameOverScreen } from './GameOverScreen';
 
+/* ── Emoji pools ─────────────────────────────────────────────── */
+const CUT_EMOJIS = [
+  '🔥', '💀', '😱', '🤯', '🎯', '⚡', '🪓', '💣',
+  '🫣', '😤', '🥶', '💥', '🗡️', '☠️', '🧨', '😈',
+  '🌪️', '🎆', '👊', '🫨',
+];
+const CLEAN_EMOJIS = ['✨', '🧹', '😌', '🍃', '🧊', '💨'];
+const TAUNT_LINES_CUT = [
+  'Ooh, that stings!',
+  'What a twist!',
+  'Didn\'t see that coming!',
+  'The table just flipped!',
+  'Chaos reigns!',
+  'Hold on to your cards!',
+  'Drama at the table!',
+  'That was ruthless!',
+];
+
+function pickRandom<T>(arr: T[], count: number): T[] {
+  const pool = [...arr];
+  const result: T[] = [];
+  for (let i = 0; i < count && pool.length > 0; i++) {
+    const idx = Math.floor(Math.random() * pool.length);
+    result.push(pool.splice(idx, 1)[0]);
+  }
+  return result;
+}
+
+/* ── Emoji Particle Burst ────────────────────────────────────── */
+interface Particle {
+  id: number;
+  emoji: string;
+  x: number;
+  y: number;
+  rotation: number;
+  scale: number;
+  delay: number;
+}
+
+function EmojiExplosion({ isCut }: { isCut: boolean }) {
+  const particles = useMemo<Particle[]>(() => {
+    const pool = isCut ? CUT_EMOJIS : CLEAN_EMOJIS;
+    const count = isCut ? 16 : 6;
+    return pickRandom(pool, count).map((emoji, i) => ({
+      id: i,
+      emoji,
+      x: (Math.random() - 0.5) * 320,
+      y: -(Math.random() * 180 + 80),
+      rotation: (Math.random() - 0.5) * 720,
+      scale: 0.6 + Math.random() * 0.9,
+      delay: i * 0.06,
+    }));
+  }, [isCut]);
+
+  return (
+    <div className="emoji-explosion" aria-hidden="true">
+      {particles.map((p) => (
+        <motion.span
+          key={p.id}
+          className="emoji-particle"
+          initial={{ opacity: 1, x: 0, y: 0, scale: 0, rotate: 0 }}
+          animate={{
+            opacity: [1, 1, 0],
+            x: p.x,
+            y: p.y,
+            scale: [0, p.scale, p.scale * 0.5],
+            rotate: p.rotation,
+          }}
+          transition={{
+            duration: isCut ? 1.6 : 1.0,
+            delay: p.delay,
+            ease: 'easeOut',
+          }}
+          style={{ fontSize: `${18 + p.scale * 16}px` }}
+        >
+          {p.emoji}
+        </motion.span>
+      ))}
+    </div>
+  );
+}
+
+/* ── Dramatic Cut Banner ─────────────────────────────────────── */
+function CutBanner({
+  cutterName,
+  cutCard,
+  winnerName,
+  termCut,
+  animate,
+}: {
+  cutterName: string;
+  cutCard: { rank: string; suit: 'spades' | 'hearts' | 'diamonds' | 'clubs' };
+  winnerName: string;
+  termCut: string;
+  animate: boolean;
+}) {
+  const taunt = useMemo(
+    () =>
+      TAUNT_LINES_CUT[Math.floor(Math.random() * TAUNT_LINES_CUT.length)],
+    [],
+  );
+
+  return (
+    <motion.div
+      className="cut-banner"
+      initial={animate ? { opacity: 0, scale: 0.3, filter: 'blur(12px)' } : false}
+      animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <div className="cut-banner-flash" />
+      <motion.div
+        className="cut-banner-title"
+        animate={animate ? { scale: [1, 1.08, 1] } : {}}
+        transition={{ duration: 0.8, repeat: Infinity, repeatType: 'reverse' }}
+      >
+        ⚔️ {termCut.toUpperCase()}! ⚔️
+      </motion.div>
+      <div className="cut-banner-detail">
+        <span className="cut-banner-who">
+          🃏 <strong>{cutterName}</strong> cut with{' '}
+          <span className={`cut-banner-card ${cutCard.suit === 'hearts' || cutCard.suit === 'diamonds' ? 'text-red' : ''}`}>
+            {cutCard.rank}{SUIT_SYMBOLS[cutCard.suit]}
+          </span>
+        </span>
+        <span className="cut-banner-takes">
+          📦 <strong>{winnerName}</strong> takes the pile!
+        </span>
+      </div>
+      <div className="cut-banner-taunt">{taunt}</div>
+    </motion.div>
+  );
+}
+
+/* ── Main Game Screen ────────────────────────────────────────── */
 export function GameScreen({
   onHome,
   onSettings,
@@ -53,6 +188,8 @@ export function GameScreen({
     () => game?.round.number === 1 && game.round.plays.length === 0,
   );
   const [error, setError] = useState('');
+  const [showCutBanner, setShowCutBanner] = useState(false);
+  const [tableFlash, setTableFlash] = useState(false);
   const lastHistory = useRef(game?.history.length ?? 0);
   const lastRankings = useRef(game?.rankings.length ?? 0);
   const t = useTerms();
@@ -73,12 +210,29 @@ export function GameScreen({
           setResultOpen(true);
           audio.gameWon();
         },
-        animate ? 1000 : 100,
+        animate ? 1200 : 100,
       );
       return () => clearTimeout(timer);
     }
     if (game.status === 'roundEnd') {
-      const timer = setTimeout(advance, animate ? 1100 : 420);
+      const lastRound = game.history.at(-1);
+      const isCut = lastRound?.cut;
+      if (isCut) {
+        setShowCutBanner(true);
+        setTableFlash(true);
+        setTimeout(() => setTableFlash(false), 600);
+      }
+      const cutPause = isCut
+        ? animate
+          ? 3200
+          : 1200
+        : animate
+          ? 2000
+          : 600;
+      const timer = setTimeout(() => {
+        setShowCutBanner(false);
+        advance();
+      }, cutPause);
       return () => clearTimeout(timer);
     }
     const current = game.players.find(
@@ -91,7 +245,7 @@ export function GameScreen({
           play(current.id, card.id);
           audio.playCard();
         },
-        animate ? 850 : 280,
+        animate ? 1400 : 500,
       );
       return () => clearTimeout(timer);
     }
@@ -151,13 +305,34 @@ export function GameScreen({
     ? cards.find((c) => c.id === selected && legal.has(c.id))
     : undefined;
   const result = game.status !== 'playing' ? game.history.at(-1) : undefined;
+  const cutCard = result?.cut ? game.round.plays.at(-1)?.card : undefined;
+  const cutPlayerId = result?.cut
+    ? game.round.plays.at(-1)?.playerId
+    : undefined;
   const name = (id: string) =>
     game.players.find((p) => p.id === id)?.name ?? '';
+
+  // Seat positions for 1–6 opponents (2–7 total players)
   const positions: Record<number, string[]> = {
     1: ['seat-top'],
     2: ['seat-upper-left', 'seat-upper-right'],
     3: ['seat-left', 'seat-top', 'seat-right'],
     4: ['seat-left', 'seat-upper-left', 'seat-upper-right', 'seat-right'],
+    5: [
+      'seat-left',
+      'seat-upper-left',
+      'seat-top',
+      'seat-upper-right',
+      'seat-right',
+    ],
+    6: [
+      'seat-lower-left',
+      'seat-left',
+      'seat-upper-left',
+      'seat-upper-right',
+      'seat-right',
+      'seat-lower-right',
+    ],
   };
   const playSelected = () => {
     if (!selection || !yourTurn) return;
@@ -176,7 +351,7 @@ export function GameScreen({
   const winnerPosition =
     result?.winnerId === viewer.id
       ? 'bottom'
-      : positions[opponents.length][
+      : positions[opponents.length]?.[
           opponents.findIndex((p) => p.id === result?.winnerId)
         ];
   const flight = result?.cut
@@ -248,7 +423,7 @@ export function GameScreen({
             {difficulty} bots
           </span>
         </div>
-        <div className={`game-table ${dealing ? 'is-dealing' : ''}`}>
+        <div className={`game-table ${dealing ? 'is-dealing' : ''} ${tableFlash ? 'table-flash' : ''}`}>
           <div className="game-table-stitch" />
           <div className="table-watermark">
             <span>♠</span>
@@ -271,7 +446,7 @@ export function GameScreen({
                 !dealing
               }
               ranking={game.rankings.find((r) => r.playerId === player.id)}
-              className={positions[opponents.length][i]}
+              className={positions[opponents.length]?.[i] ?? 'seat-top'}
             />
           ))}
           <div className="center-play-area">
@@ -337,8 +512,8 @@ export function GameScreen({
                         }
                         transition={
                           result
-                            ? { duration: 0.9, times: [0, 0.45, 1] }
-                            : { duration: 0.35 }
+                            ? { duration: 1.4, times: [0, 0.4, 1] }
+                            : { duration: 0.5 }
                         }
                       >
                         <PlayingCard card={card} />
@@ -363,7 +538,11 @@ export function GameScreen({
               <>
                 <strong>{result.cut ? `${t.cut}!` : t.cleanRound}</strong>
                 <span>
-                  {result.cut ? t.pickup(name(result.winnerId)) : t.discarded}
+                  {result.cut
+                    ? cutCard && cutPlayerId
+                      ? `${name(cutPlayerId)} cut with ${cutCard.rank}${SUIT_SYMBOLS[cutCard.suit]} · ${name(result.winnerId)} takes the pile!`
+                      : t.pickup(name(result.winnerId))
+                    : t.discarded}
                 </span>
               </>
             ) : (
@@ -388,10 +567,37 @@ export function GameScreen({
               </>
             )}
           </div>
+
+          {/* ── Dramatic cut banner + emoji explosion ── */}
+          <AnimatePresence>
+            {showCutBanner && result?.cut && cutCard && cutPlayerId && (
+              <>
+                <EmojiExplosion isCut={true} />
+                <CutBanner
+                  cutterName={name(cutPlayerId)}
+                  cutCard={cutCard}
+                  winnerName={name(result.winnerId)}
+                  termCut={t.cut}
+                  animate={animate}
+                />
+              </>
+            )}
+          </AnimatePresence>
+
+          {/* ── Emoji shower for clean rounds too (subtler) ── */}
+          <AnimatePresence>
+            {result && !result.cut && game.status === 'roundEnd' && (
+              <EmojiExplosion isCut={false} />
+            )}
+          </AnimatePresence>
+
           {result && game.status === 'roundEnd' && (
             <button
               className="skip-round"
-              onClick={advance}
+              onClick={() => {
+                setShowCutBanner(false);
+                advance();
+              }}
               aria-label="Skip round animation"
             >
               <SkipForward size={16} />
@@ -412,7 +618,7 @@ export function GameScreen({
         </div>
         <section
           className="hand-section"
-          aria-label={handVisible ? `${viewer.name}’s hand` : 'Hidden hand'}
+          aria-label={handVisible ? `${viewer.name}'s hand` : 'Hidden hand'}
         >
           <div className="hand-topline">
             <span>
@@ -545,7 +751,7 @@ export function GameScreen({
           <p>
             Everyone else, eyes off the cards.
             <br />
-            Your hand is hidden until you’re ready.
+            Your hand is hidden until you're ready.
           </p>
           <button
             className="primary-button"
@@ -556,7 +762,7 @@ export function GameScreen({
             autoFocus
           >
             <Eye size={19} />
-            I’m {current.name}. Show my hand
+            I'm {current.name}. Show my hand
             <ArrowRight size={18} />
           </button>
           <button className="text-button" onClick={onHome}>

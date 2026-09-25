@@ -34,15 +34,32 @@ import { GameOverScreen } from './GameOverScreen';
 
 /* ── Emoji pools ─────────────────────────────────────────────── */
 const CUT_EMOJIS = [
-  '🔥', '💀', '😱', '🤯', '🎯', '⚡', '🪓', '💣',
-  '🫣', '😤', '🥶', '💥', '🗡️', '☠️', '🧨', '😈',
-  '🌪️', '🎆', '👊', '🫨',
+  '🔥',
+  '💀',
+  '😱',
+  '🤯',
+  '🎯',
+  '⚡',
+  '🪓',
+  '💣',
+  '🫣',
+  '😤',
+  '🥶',
+  '💥',
+  '🗡️',
+  '☠️',
+  '🧨',
+  '😈',
+  '🌪️',
+  '🎆',
+  '👊',
+  '🫨',
 ];
 const CLEAN_EMOJIS = ['✨', '🧹', '😌', '🍃', '🧊', '💨'];
 const TAUNT_LINES_CUT = [
   'Ooh, that stings!',
   'What a twist!',
-  'Didn\'t see that coming!',
+  "Didn't see that coming!",
   'The table just flipped!',
   'Chaos reigns!',
   'Hold on to your cards!',
@@ -129,15 +146,16 @@ function CutBanner({
   animate: boolean;
 }) {
   const taunt = useMemo(
-    () =>
-      TAUNT_LINES_CUT[Math.floor(Math.random() * TAUNT_LINES_CUT.length)],
+    () => TAUNT_LINES_CUT[Math.floor(Math.random() * TAUNT_LINES_CUT.length)],
     [],
   );
 
   return (
     <motion.div
       className="cut-banner"
-      initial={animate ? { opacity: 0, scale: 0.3, filter: 'blur(12px)' } : false}
+      initial={
+        animate ? { opacity: 0, scale: 0.3, filter: 'blur(12px)' } : false
+      }
       animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
     >
@@ -152,8 +170,11 @@ function CutBanner({
       <div className="cut-banner-detail">
         <span className="cut-banner-who">
           🃏 <strong>{cutterName}</strong> cut with{' '}
-          <span className={`cut-banner-card ${cutCard.suit === 'hearts' || cutCard.suit === 'diamonds' ? 'text-red' : ''}`}>
-            {cutCard.rank}{SUIT_SYMBOLS[cutCard.suit]}
+          <span
+            className={`cut-banner-card ${cutCard.suit === 'hearts' || cutCard.suit === 'diamonds' ? 'text-red' : ''}`}
+          >
+            {cutCard.rank}
+            {SUIT_SYMBOLS[cutCard.suit]}
           </span>
         </span>
         <span className="cut-banner-takes">
@@ -222,13 +243,7 @@ export function GameScreen({
         setTableFlash(true);
         setTimeout(() => setTableFlash(false), 600);
       }
-      const cutPause = isCut
-        ? animate
-          ? 3200
-          : 1200
-        : animate
-          ? 2000
-          : 600;
+      const cutPause = isCut ? (animate ? 3200 : 1200) : animate ? 2000 : 600;
       const timer = setTimeout(() => {
         setShowCutBanner(false);
         advance();
@@ -423,7 +438,9 @@ export function GameScreen({
             {difficulty} bots
           </span>
         </div>
-        <div className={`game-table ${dealing ? 'is-dealing' : ''} ${tableFlash ? 'table-flash' : ''}`}>
+        <div
+          className={`game-table ${dealing ? 'is-dealing' : ''} ${tableFlash ? 'table-flash' : ''}`}
+        >
           <div className="game-table-stitch" />
           <div className="table-watermark">
             <span>♠</span>
